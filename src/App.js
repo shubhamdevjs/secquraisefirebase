@@ -1,24 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect, useRef } from "react";
+import GetData from "./Components/Eventdata/Database";
+
+import { app } from "./firebase";
+import { getStorage } from "firebase/storage";
+import {
+  ref,
+  getDownloadURL,
+  listAll,
+} from "firebase/storage";
+
+const storage = getStorage(app);
 
 function App() {
+  const [imageUrls, setImageUrls] = useState([]);
+  const dataFetchedRef = useRef(false);
+  
+  const imagesListRef = ref(storage, "images");
+
+  useEffect(() => {
+    if (dataFetchedRef.current) return;
+      dataFetchedRef.current = true;
+
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          let iname={
+            name: item.name,
+            url: url
+          };
+          setImageUrls((prev) => [...prev, iname]);
+        });
+      });
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* <div className="image">
+        {imageUrls.map((url) => {
+          return <img src={url} className="image" alt="celebrity" />;
+        })}
+      </div> */}
+      <GetData arr={imageUrls}/>
+
+    </>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./database.css";
 import { app } from "../../firebase";
+import Filterdata from "../Filter/Filterdata";
 
 import { getDatabase, onValue, ref } from "firebase/database";
 // import { async } from "@firebase/util";
@@ -19,7 +20,6 @@ const GetData = ({ arr }) => {
   });
   const [url, setUrl] = useState(`"please choose the event"`);
   const [gender, setGender] = useState("");
-  const [highlight, setHighlight] = useState(false);
 
   const getData = () => {
     onValue(ref(db), (snapshot) => {
@@ -39,6 +39,14 @@ const GetData = ({ arr }) => {
     getData();
   }, []);
   // console.log(arr[0].url);
+ 
+    const[data, setData]=useState(1)
+
+    const getfilter=()=>{
+        setData(data+1)
+        console.log(data)
+    }
+
 
   const getDetails = (id, location, date, time, name, gender) => {
     setDetails({
@@ -50,27 +58,28 @@ const GetData = ({ arr }) => {
       gender,
     });
     // setHighlight(!highlight)
-       
     arr.forEach((images) => {
-      let detailname = details.name + ".jpg";
-      // console.log(detailname);  
+      let detailname = name + ".jpg";
+
+      // console.log(detailname);
       let imagename = images.name;
       if (imagename === detailname) {
         // console.log(imagename+" o ");
         // console.log(detailname);
-        setUrl(images.url)
-        setGender(details.gender)
-        // console.log(gender+' inloop')
+        // console.log(details.gender)
+        setUrl(images.url);
+        setGender(gender);
+        // return `<h1>${images.url}</h1>
+        // <img src=${details.gender} className="image" alt="celebrity" />`
+        console.log(gender + " inloop");
         // return `${},${}`
       }
     });
   };
-  console.log(details)
-  
+  // console.log(arr)
   
   // console.log(details.gender);
-  
-  
+
   return (
     <>
       <div style={{ backgroundColor: "blue" }}>
@@ -103,13 +112,29 @@ const GetData = ({ arr }) => {
         </div>
 
         <div className="images">
+          {}
+
           {/* {genimage()} */}
           <h1>{gender}</h1>
           <img src={url} className="image" alt="celebrity" />
         </div>
 
         <div className="event">
-          <h1 style={{ marginLeft: "1rem" }}>EVENTS</h1>
+          <div className="containerfilter">
+            <h1
+              style={{
+                marginTop: "10px",
+                marginBottom: "0",
+                textAlign: "center",
+              }}
+            >
+              EVENTS
+            </h1>
+            <h2><Filterdata/></h2>
+            {/* <h2>
+              <FaFilter />
+            </h2> */}
+          </div>
           {objdata.map((obj) => {
             return (
               <>
